@@ -52,6 +52,18 @@ Seed users (from data.sql): admin (id:1), alice (2), bob (3), cust1 (4)
 - Customer assets
   - GET /api/assets?customerId=4
 
+## Admin Endpoints
+
+- Match order (Admin only)
+  - POST /api/admin/order/match/{id}
+  - Requires ROLE_ADMIN authorization (use admin user token)
+  - Matches a PENDING order (sets status to MATCHED)
+  - Returns 200 OK on success
+  - Error cases:
+    - 403 Forbidden: if user is not admin
+    - 400 Bad Request: if order is already MATCHED or CANCELED
+    - 400 Bad Request: if order not found
+
 ## Business rules (brief)
 - BUY/SELL orders are created as PENDING.
 - All cash operations use the TRY asset.
@@ -62,11 +74,12 @@ Seed users (from data.sql): admin (id:1), alice (2), bob (3), cust1 (4)
 ## Tests
 ```cmd
 mvnw.cmd clean test
-```
+  1) Run Auth -> Login to populate `{{token}}` (use "admin" user for admin operations).
 
 ## Postman Collection
-- File: `postman/ingHub.postman_collection.json`
-- Import in Postman: Import -> File -> select the JSON file above.
+  4) Run Admin -> Match Order (admin only) to match a pending order.
+  5) Run Orders -> Cancel Order (last created) which uses `{{orderId}}` (only works on PENDING orders).
+  6) Run Assets -> Get Assets by Customer.
 - Collection variables:
   - `baseUrl` (default: http://localhost:8080)
   - `token` (auto-filled after running Auth -> Login)

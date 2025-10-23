@@ -10,6 +10,9 @@ import com.broker.inghub.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -113,5 +116,42 @@ public class OrderService {
         assetRepository.save(tryAsset);
         order.setStatus(Status.CANCELED);
         orderRepository.save(order);
+    }
+
+    @Transactional
+    public void matchOrderByAdmin(Long orderId) {
+        validateAdminRole();
+        OrderEntity order = findAndValidateOrderForMatching(orderId);
+        matchOrderInternal(order);
+    }
+
+    private void validateAdminRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null ||
+            !authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            throw new IllegalStateException("Access denied. Admin role required.");
+        }
+    }
+
+    private OrderEntity findAndValidateOrderForMatching(Long orderId) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        if (order.getStatus() == Status.MATCHED) {
+            throw new IllegalStateException("Order is already matched");
+        }
+
+        if (order.getStatus() == Status.CANCELED) {
+            throw new IllegalStateException("Cannot match a canceled order");
+        }
+
+        return order;
+    }
+
+    private void matchOrderInternal(OrderEntity order) {
+        order.setStatus(Status.MATCHED);
+        orderRepository.save(order);
+        log.info("Order {} matched successfully by admin", order.getId());
     }
 }

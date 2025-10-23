@@ -144,6 +144,25 @@
       ]
     },
     {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Match Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/order/match/{{orderId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "admin", "order", "match", "{{orderId}}" ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Assets",
       "item": [
         {
