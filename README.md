@@ -45,7 +45,7 @@ Seed users (from data.sql): admin (id:1), alice (2), bob (3), cust1 (4)
     - POST /api/orders
     - Body example:
   ```json
-  {"customerId":"4","assetName":"ABC","side":"BUY","size":10,"price":5}
+  {"customerId":"4","assetName":"TRY","side":"BUY","size":10,"price":5}
   ```
     - createDate response format (UTC): "yyyy:MM:dd HH:mm:ss"
 
