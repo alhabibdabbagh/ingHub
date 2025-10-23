@@ -1,0 +1,170 @@
+{
+  "info": {
+    "name": "ingHub API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for ingHub brokerage order service"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "customerId", "value": "4" },
+    { "key": "assetName", "value": "ABC" },
+    { "key": "orderId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "login" ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let data = {};",
+                  "try { data = pm.response.json(); } catch(e) { }",
+                  "if (data && data.token) {",
+                  "  pm.collectionVariables.set('token', data.token);",
+                  "  console.log('Token saved to collection variables');",
+                  "} else {",
+                  "  console.warn('No token in response');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order (BUY)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "orders" ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"assetName\": \"{{assetName}}\",\n  \"side\": \"BUY\",\n  \"size\": 10,\n  \"price\": 5\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let data = {};",
+                  "try { data = pm.response.json(); } catch(e) { }",
+                  "if (data && data.id) {",
+                  "  pm.collectionVariables.set('orderId', data.id);",
+                  "  console.log('orderId saved to collection variables');",
+                  "} else {",
+                  "  console.warn('No id in response');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Orders (by customer)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders?customerId={{customerId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "orders" ],
+              "query": [
+                { "key": "customerId", "value": "{{customerId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Orders (date range)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders?customerId={{customerId}}&startDate=2025-10-01&endDate=2025-10-15",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "orders" ],
+              "query": [
+                { "key": "customerId", "value": "{{customerId}}" },
+                { "key": "startDate", "value": "2025-10-01" },
+                { "key": "endDate", "value": "2025-10-15" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel Order (last created)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "orders", "{{orderId}}" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assets",
+      "item": [
+        {
+          "name": "Get Assets by Customer",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/assets?customerId={{customerId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "assets" ],
+              "query": [
+                { "key": "customerId", "value": "{{customerId}}" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
