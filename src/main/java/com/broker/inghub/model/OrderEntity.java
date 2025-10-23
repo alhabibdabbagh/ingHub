@@ -18,10 +18,6 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-
     @Column(nullable = false)
     private String assetName;
 
@@ -41,5 +37,9 @@ public class OrderEntity {
 
     @Column(nullable = false)
     private Instant createDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 }
 

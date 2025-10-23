@@ -1,8 +1,8 @@
 package com.broker.inghub.dto;
 
 import com.broker.inghub.model.Status;
-import lombok.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;

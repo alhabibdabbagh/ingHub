@@ -27,7 +27,7 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             log.warn("Password validation failed for user: {}", request.getUsername());
-       //     throw new AuthenticationFailedException("Invalid username or password");
+            //     throw new AuthenticationFailedException("Invalid username or password");
         }
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole(), String.valueOf(user.getId()));

@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     List<OrderEntity> findByCustomerAndCreateDateBetween(Customer customer, Instant from, Instant to);
+
     List<OrderEntity> findByCustomer(Customer customer);
 }
 
